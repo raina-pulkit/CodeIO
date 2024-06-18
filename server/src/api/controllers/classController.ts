@@ -76,7 +76,7 @@ export const addStudent = async (req: Request, res: Response) => {
       const CT = await prisma.classTeacher.findFirst({
         where: { classId },
       });
-      if (req.teacherId !== CT?.teacherId)
+      if (req.userId !== CT?.teacherId)
         return res.status(403).json({
           err: "you are not the class teacher!",
         });

@@ -69,13 +69,15 @@ export const signup = async (req: Request, res: Response) => {
 
     await prisma.adminAddedTeacherEmail.update({
       where: { email },
-      data: { userId: result.employeeId },
+      data: { employeeId: result.employeeId },
     });
 
     return res.status(200).json({
       msg: "Success",
     });
   } catch (err: any) {
+    console.log(err);
+    
     return res.status(500).json({
       err: "internal server error" + err.message,
     });
@@ -114,7 +116,7 @@ export const getAllTeachers = async (req: Request, res: Response) => {
 export const getSpecificTeacher = async (req: Request, res: Response) => {
   const { userRole } = req;
   const { teacherId } = req.params;
-  if (userRole !== "admin" && teacherId != req.teacherId)
+  if (userRole !== "admin" && teacherId != req.userId)
     return res.status(403).json({
       err: "neither are you admin, nor requesting for your own info",
     });
@@ -145,7 +147,7 @@ export const updateTeacherDetails = async (req: Request, res: Response) => {
     req.body;
 
   const { userRole } = req;
-  if (userRole !== "admin" && teacherId !== req.teacherId)
+  if (userRole !== "admin" && teacherId !== req.userId)
     return res.status(403).json({
       err: "neither are you the admin, nor are you requesting for your own information!",
     });

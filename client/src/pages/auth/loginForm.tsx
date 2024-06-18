@@ -73,7 +73,6 @@ const LoginForm = () => {
     setButtonLoading(true);
     e?.preventDefault();
     const d = JSON.stringify(body);
-    const { usn, email } = body;
 
     try {
       const res = await axios.post(`/api/login`, d, {
@@ -89,11 +88,15 @@ const LoginForm = () => {
         return;
       }
 
+      console.log("Result: ", res);
+
       if (res?.status === 200) {
         let user: UserProps;
         try {
           user = await axios.get(
-            `/api/${usn ? "s" : "t"}?${usn ? "studentId" : "teacherId"}=${res.data.userId}`,
+            `/api/${res.data.userRole === "student" ? "s" : "t"}/${
+              res.data.userId
+            }`,
             {
               headers: {
                 "Content-Type": "application/json",
@@ -102,23 +105,26 @@ const LoginForm = () => {
             }
           );
 
-          console.log("Final user: ", user);
+          const { data } = user;
+          console.log("Data is ", data);
 
           if (
             signIn({
               auth: {
-                token: res.data.access_token,
+                token: res.data.accessToken,
                 type: "Bearer",
               },
               userState: {
-                name: user.name,
-                usn: user.usn,
-                userRole: user.userRole,
+                name: data.name,
+                userId:
+                  res.data.userRole === "student"
+                    ? data.studentId
+                    : data.teacherId,
+                userRole: res.data.userRole,
               },
             })
           )
-            console.log("SINGINED IN");
-          // navigate("/u");
+            navigate("/u");
           else {
             errorShower(
               "Error!",
@@ -129,12 +135,12 @@ const LoginForm = () => {
         } catch (e: any) {
           console.log(e);
 
-          errorShower("Error234!", e.response.data.err as string);
+          errorShower("Error!", e.response.data.err as string);
         }
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
-      errorShower("Error123!", e.response.data.err as string);
+      errorShower("Error!", e.response.data.err as string);
     }
 
     setButtonLoading(false);
@@ -185,7 +191,7 @@ const LoginForm = () => {
                   <FormLabel className="text-white">Email</FormLabel>
                   {/* Form Control allows to share the context to display errors */}
                   <FormControl>
-                    <Input placeholder="Email" type="email" {...field} />
+                    <Input placeholder="Email" type="text" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -227,7 +233,7 @@ const LoginForm = () => {
 
             <Link
               to={"/register"}
-              className="text-white text-xs text-right hover:text-black mt-5"
+              className="text-secondary-content text-xs text-right hover:text-muted/40 mt-5"
               onClick={() => setLoading(true)}
             >
               Haven't registered yet? Register now!

@@ -2,23 +2,19 @@ import { Request, Response } from "express";
 import prisma from "../../utils/db";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-
 export const login = async (req: Request, res: Response) => {
   const { email, usn, password } = req.body;
 
-  if(usn !== "" && email !== "") return res.status(400).json({error: "use only email or usn, not both"})
+  if (usn !== "" && email !== "")
+    return res.status(400).json({ error: "use only email or usn, not both" });
 
   if (usn) {
-	console.log("HEHE");
-	
     try {
       const result = await prisma.student.findUnique({
         where: {
           usn,
         },
       });
-	  console.log("Result: ", result);
-	  
 
       if (!result) {
         return res.status(400).json({
@@ -27,8 +23,7 @@ export const login = async (req: Request, res: Response) => {
       }
 
       const match = await bcrypt.compare(password, result.password);
-	  console.log("Match: ", match);
-	  
+
       if (match) {
         const token = jwt.sign(
           {
@@ -41,8 +36,9 @@ export const login = async (req: Request, res: Response) => {
           { expiresIn: "1h" }
         );
         return res.status(200).json({
-          access_token: `${token}`,
-          userId: result.studentId
+          accessToken: `${token}`,
+          userId: result.studentId,
+          userRole: "student"
         });
       } else
         res.status(400).json({
@@ -61,10 +57,46 @@ export const login = async (req: Request, res: Response) => {
         },
       });
 
+      console.log("RESULT: ", result);
+      
+
       if (!result) {
-        return res.status(400).json({
-          err: "invalid credentials!",
+      console.log("RESULT LMAO: ", result);
+        const resultStud = await prisma.student.findUnique({
+          where: { email },
         });
+
+        console.log("resultStud: ", resultStud);
+        
+
+        if (!resultStud)
+          return res.status(400).json({
+            err: "invalid credentials!",
+          });
+
+        const match = await bcrypt.compare(password, resultStud.password);
+        console.log("MATCH: ", match);
+        
+        if (match) {
+          const token = jwt.sign(
+            {
+              studentId: resultStud.studentId,
+              usn: resultStud.usn,
+              userRole: "student",
+              name: resultStud.name,
+            },
+            process.env.JWT_SECRET as string,
+            { expiresIn: "1h" }
+          );
+          return res.status(200).json({
+            accessToken: `${token}`,
+            userId: resultStud.studentId,
+            userRole: "student"
+          });
+        } else
+          return res.status(400).json({
+            err: "invalid credentials!",
+          });
       }
 
       const match = await bcrypt.compare(password, result.password);
@@ -73,7 +105,6 @@ export const login = async (req: Request, res: Response) => {
           {
             teacherId: result.teacherId,
             employeeId: result.employeeId,
-            email: result.email,
             userRole: "teacher",
             name: result.name,
           },
@@ -81,8 +112,9 @@ export const login = async (req: Request, res: Response) => {
           { expiresIn: "1h" }
         );
         return res.status(200).json({
-          access_token: `${token}`,
-          userId: result.teacherId
+          accessToken: `${token}`,
+          userId: result.teacherId,
+          userRole: "teacher"
         });
       } else
         res.status(400).json({

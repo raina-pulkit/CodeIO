@@ -76,6 +76,7 @@ export const signup = async (req: Request, res: Response) => {
         data: {
           studentId: result.studentId,
           admissionDate: yoj as Date,
+          currentSemester: allowed.currentSemester
         },
       });
 
@@ -142,7 +143,10 @@ export const getSpecificStudent = async (req: Request, res: Response) => {
   const { studentId } = req.params;
   const { userRole } = req;
 
-  if (!userRole || (userRole === "student" && studentId !== req.studentId))
+  console.log("USEROLE: ", userRole);
+  
+
+  if (!userRole || (userRole === "student" && studentId !== req.userId))
     return res.status(403).json({
       err: "you are neither admin nor requesting your information",
     });
@@ -199,7 +203,7 @@ export const getSpecificStudentByUsn = async (req: Request, res: Response) => {
 
     if (
       !userRole ||
-      (userRole === "student" && exists?.studentId !== req.studentId)
+      (userRole === "student" && exists?.studentId !== req.userId)
     )
       return res.status(403).json({
         err: "you are neither admin nor requesting your information",

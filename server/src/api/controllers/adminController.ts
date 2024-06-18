@@ -129,7 +129,7 @@ export const getAdminInfo = async (req: Request, res: Response) => {
       err: "no admin id found!",
     });
 
-  if (!userRole || userRole !== "admin" || req.adminId !== employeeId) {
+  if (!userRole || userRole !== "admin" || req.userId !== employeeId) {
     return res.status(403).json({
       err: "Either you are not admin, or not requesting your information!",
     });
@@ -158,7 +158,7 @@ export const updateInfo = async (req: Request, res: Response) => {
       err: "no admin id found!",
     });
 
-  if (!userRole || userRole !== "admin" || req.adminId !== adminId) {
+  if (!userRole || userRole !== "admin" || req.userId !== adminId) {
     return res.status(403).json({
       err: "Either you are not admin, or not requesting your information!",
     });

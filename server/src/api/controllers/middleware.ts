@@ -4,17 +4,13 @@ import { Request, Response, NextFunction } from "express";
 dotenv.config();
 
 interface CustomJwtPayload extends JwtPayload {
-  studentId?: string;
-  teacherId?: string;
-  adminId?: string;
+  userId: string;
 }
 
 declare module "express-serve-static-core" {
   interface Request {
     userRole?: string;
-    studentId?: string;
-    teacherId?: string;
-    adminId?: string;
+    userId: string;
   }
 }
 
@@ -24,6 +20,8 @@ export async function authMiddleware(
   next: NextFunction
 ) {
   const token = req.headers.authorization || "";
+  console.log("TOKE: ", token);
+  
 
   try {
     const jwtToken = token.split(" ")[1];
@@ -32,22 +30,25 @@ export async function authMiddleware(
       process.env.JWT_SECRET as string
     ) as CustomJwtPayload;
     req.userRole = response.userRole;
-    if(response.studentId) req.studentId = response.studentId;
-    if(response.teacherId) req.teacherId = response.teacherId;
-    if(response.adminId) req.adminId = response.adminId;
+    if (response.studentId) req.userId = response.studentId;
+    if (response.teacherId) req.userId = response.teacherId;
+    if (response.adminId) req.userId = response.adminId;
 
-    if (
-      (response.studentId && response.userRole === "student") ||
-      (response.teacherId && response.userRole === "teacher") || 
-      (response.adminId && response.userRole === "admin")
-    ) {
+    console.log("RESPOSE: ", response);
+    
+
+    if (response.userRole && (response.studentId || response.teacherId)) {
       next();
     } else {
+      console.log("LMAO HERE");
+      
       return res.json({
         err: "not authorized",
       });
     }
   } catch (e: any) {
+    console.log("HERERE");
+    
     return res.status(403).json({
       err: "not authorized",
     });

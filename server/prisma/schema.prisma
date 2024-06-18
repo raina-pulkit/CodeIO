@@ -25,10 +25,11 @@ model Course {
 }
 
 model AdminAddedStudentEmail {
-  adminEmailId String  @id @default(cuid())
-  userId       String? @unique
-  email        String  @unique
-  usn          String  @unique
+  adminEmailId    String       @id @default(cuid())
+  userId          String?      @unique
+  email           String       @unique
+  usn             String       @unique
+  currentSemester semesterenum
 
   user Student? @relation(fields: [userId], references: [studentId])
 
@@ -94,12 +95,13 @@ model Student {
 }
 
 model StudentDetails {
-  studentId     String      @id
-  dateOfBirth   DateTime?
-  gender        genderenum?
-  address       String?
-  admissionDate DateTime
-  phNo          String?     @db.VarChar(10)
+  studentId       String       @id
+  dateOfBirth     DateTime?
+  gender          genderenum?
+  address         String?
+  admissionDate   DateTime
+  phNo            String?      @db.VarChar(10)
+  currentSemester semesterenum
 
   student Student @relation(fields: [studentId], references: [studentId], onDelete: Cascade, onUpdate: Cascade, map: "fk_studentid")
 

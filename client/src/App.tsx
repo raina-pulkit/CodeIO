@@ -6,7 +6,7 @@ import ForgotPassword from "./pages/auth/forgotPassword";
 import PageNotFound from "./pages/404-page";
 import NavBar from "./_components/navbar/navbar";
 import AuthOutlet from "@auth-kit/react-router/AuthOutlet";
-import Dashboard from "./pages/dashboard";
+import Dashboard from "./pages/u/dashboard";
 
 function App() {
   return (
