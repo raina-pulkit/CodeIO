@@ -8,11 +8,9 @@ export const userLoginSchema = z
       .max(32, "Password must be less than 32 characters"),
     email: z
       .string()
-      .nullable()
       .or(z.object({ email: z.string().email() })),
     usn: z
       .string()
-      .nullable()
       .or(
         z.object({ usn: z.string().length(10, "USN must be of length 10!") })
       ),

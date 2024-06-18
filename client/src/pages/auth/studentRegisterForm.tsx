@@ -78,7 +78,7 @@ const StudentRegisterForm = () => {
     const d = JSON.stringify(body);
 
     try {
-      const res = await axios.post(`http://localhost:3000/api/s/register`, d, {
+      const res = await axios.post(`/api/s/register`, d, {
         headers: {
           "Content-Type": "application/json",
         },

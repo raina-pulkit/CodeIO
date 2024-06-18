@@ -18,7 +18,7 @@ import { z } from "zod";
 import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 import { UserProps } from "types";
 import { Link, useNavigate } from "react-router-dom";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import {
   Form,
   FormControl,
@@ -73,10 +73,10 @@ const LoginForm = () => {
     setButtonLoading(true);
     e?.preventDefault();
     const d = JSON.stringify(body);
-    // console.log("BODY IS: ", body);
+    const { usn, email } = body;
 
     try {
-      const res = await axios.post(`http://localhost:3000/api/login`, d, {
+      const res = await axios.post(`/api/login`, d, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -92,15 +92,17 @@ const LoginForm = () => {
       if (res?.status === 200) {
         let user: UserProps;
         try {
-          user = await axios.get(`http://localhost:3000/api/u?usn=${body.usn}`, {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${res.data.accessToken}`,
-            },
-          });
+          user = await axios.get(
+            `/api/${usn ? "s" : "t"}?${usn ? "studentId" : "teacherId"}=${res.data.userId}`,
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${res.data.accessToken}`,
+              },
+            }
+          );
 
           console.log("Final user: ", user);
-          
 
           if (
             signIn({
@@ -114,9 +116,9 @@ const LoginForm = () => {
                 userRole: user.userRole,
               },
             })
-          ) console.log("SINGINED IN");
-          
-            // navigate("/u");
+          )
+            console.log("SINGINED IN");
+          // navigate("/u");
           else {
             errorShower(
               "Error!",
@@ -126,13 +128,13 @@ const LoginForm = () => {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (e: any) {
           console.log(e);
-          
-          errorShower("Error234!", (e.response.data.err) as string);
+
+          errorShower("Error234!", e.response.data.err as string);
         }
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
-      errorShower("Error123!", (e.response.data.err) as string);
+      errorShower("Error123!", e.response.data.err as string);
     }
 
     setButtonLoading(false);
@@ -183,7 +185,7 @@ const LoginForm = () => {
                   <FormLabel className="text-white">Email</FormLabel>
                   {/* Form Control allows to share the context to display errors */}
                   <FormControl>
-                    <Input placeholder="Email" type="text" {...field} />
+                    <Input placeholder="Email" type="email" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

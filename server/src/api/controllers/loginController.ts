@@ -42,6 +42,7 @@ export const login = async (req: Request, res: Response) => {
         );
         return res.status(200).json({
           access_token: `${token}`,
+          userId: result.studentId
         });
       } else
         res.status(400).json({
@@ -81,6 +82,7 @@ export const login = async (req: Request, res: Response) => {
         );
         return res.status(200).json({
           access_token: `${token}`,
+          userId: result.teacherId
         });
       } else
         res.status(400).json({
