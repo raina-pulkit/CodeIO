@@ -1,8 +1,8 @@
 import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 import { useNavigate } from "react-router-dom";
 import { AuthOptions } from "types";
-import StudentDashboard from "./studentDashboard";
-import TeacherDashboard from "./teacherDashboard";
+import StudentDashboard from "./studentDashboard/studentDashboard";
+import TeacherDashboard from "./teacherDashboard/teacherDashboard";
 import AdminDashboard from "./adminDashboard";
 
 const Dashboard = () => {
@@ -12,8 +12,8 @@ const Dashboard = () => {
   if (!user) navigate("/login");
   const { userRole } = user as AuthOptions;
 
-  if (userRole === "student") return <StudentDashboard />;
-  else if (userRole === "teacher") return <TeacherDashboard />;
+  if (userRole === "student") return <main className="flex justify-center items-center"><StudentDashboard /></main>;
+  else if (userRole === "teacher") return <main className="flex justify-center items-center"><TeacherDashboard /></main>;
   else return <AdminDashboard />;
 };
 

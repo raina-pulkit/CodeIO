@@ -12,7 +12,7 @@ function App() {
   return (
     <>
       <NavBar />
-      <div className="p-10 pt-28 flex flex-col min-h-screen">
+      <div className="p-10 pt-28 flex flex-col min-h-screen w-screen">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />

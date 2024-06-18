@@ -17,8 +17,10 @@ model Branch {
 }
 
 model Course {
-  courseCode       String             @id
-  courseName       String
+  courseCode    String  @id
+  courseName    String
+  integratedLab Boolean
+
   courseUndertaken CourseUndertaken[]
 
   @@map("course")
@@ -54,7 +56,7 @@ model Class {
   section         String       @db.VarChar(1)
   yearOfAdmission Int
 
-  studentIds       String[]
+  studentIds       Student[]
   courseUndertaken CourseUndertaken[]
   classTeacher     ClassTeacher[]
   branch           Branch             @relation(fields: [branchId], references: [branchId], onUpdate: Cascade)
@@ -73,6 +75,7 @@ model CourseUndertaken {
   class      Class        @relation(fields: [classId], references: [classId], onUpdate: Cascade, map: "fk_classid")
   course     Course       @relation(fields: [courseCode], references: [courseCode], onUpdate: Cascade, map: "fk_courseid")
   teacher    Teacher      @relation(fields: [teacherId], references: [teacherId], onUpdate: Cascade, map: "fk_teacherid")
+  scores     Score[]
 
   @@unique([courseCode, classId])
   @@map("courseUndertaken")
@@ -87,9 +90,10 @@ model Student {
   admissionDate DateTime
 
   studentDetails          StudentDetails?
-  classId                 String[]
+  classId                 Class[]
   attendance              Attendance[]
   adminAddedStudentEmails AdminAddedStudentEmail?
+  score                   Score[]
 
   @@map("student")
 }
@@ -176,6 +180,27 @@ model Attendance {
 
   @@unique([courseObjId, studentId])
   @@map("attendance")
+}
+
+model Score {
+  scoreId     String @id @default(cuid())
+  studentId   String
+  courseObjId String
+  score       Float  @default(0)
+
+  Student   Student          @relation(fields: [studentId], references: [studentId])
+  CourseObj CourseUndertaken @relation(fields: [courseObjId], references: [courseObjId])
+}
+
+enum examenum {
+  cie_1
+  cie_2
+  cie_3
+  quiz_1
+  quiz_2
+  aat
+  lab
+  see
 }
 
 enum genderenum {
