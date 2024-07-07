@@ -1,6 +1,22 @@
 import { Request, Response } from "express";
 import prisma from "../../utils/db";
 import bcrypt from "bcrypt";
+import multer from "multer";
+import * as xlsx from "xlsx";
+import * as path from "path";
+import * as fs from "fs";
+import { connect } from "http2";
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploadMarks");
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now() + file.originalname}`);
+  },
+});
+
+export const upload = multer({ storage });
 
 export const signup = async (req: Request, res: Response) => {
   const { name, email, password, joiningDate } = req.body;
@@ -77,7 +93,7 @@ export const signup = async (req: Request, res: Response) => {
     });
   } catch (err: any) {
     console.log(err);
-    
+
     return res.status(500).json({
       err: "internal server error" + err.message,
     });
@@ -231,3 +247,90 @@ export const makeClassTeacher = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const uploadMarks = async (req: Request, res: Response) => {
+  interface marksInput {
+    usn: string;
+    courseCode: string;
+    cie1: number;
+    cie2: number;
+    cie3: number;
+    quiz1?: number;
+    quiz2?: number;
+    aat?: number;
+    lab?: number;
+    total: number;
+  }
+
+  const directoryPath = path.join(__dirname, "../../../uploadMarks");
+  const files = fs.readdirSync(directoryPath);
+  const excelfile = files[0];
+  const excelFilePath = path.join(directoryPath, excelfile);
+  const workbook = xlsx.readFile(excelFilePath);
+  const worksheet = xlsx.utils.sheet_to_json(
+    workbook.Sheets[workbook.SheetNames[0]]
+  ) as marksInput[];
+
+  try{
+    for(let row of worksheet){
+      console.log(row.usn);
+      const response = await prisma.student.findFirst(
+        {
+          where : {usn:row.usn}
+        }
+      );
+      if(!response){
+        return res.json({
+          err : "no such student exists"
+        })
+      }
+      const studentId = response.studentId;
+      
+      const newResponse = await prisma.score.upsert({
+        where:{
+          studentId
+        },
+        update:{
+          cie_1:row.cie1,
+          cie_2:row.cie2,
+          cie_3:row.cie3,
+          aat:row.aat?row.aat:0,
+          quiz_1:row.quiz1?row.quiz1:0,
+          quiz_2:row.quiz2?row.quiz2:0,
+          lab:row.lab?row.lab:0,
+          total:row.total?row.total:0
+        },
+        create:{
+          studentId,
+          courseObjId:row.courseCode,
+          cie_1:row.cie1,
+          cie_2:row.cie2,
+          cie_3:row.cie3,
+          aat:row.aat?row.aat:0,
+          quiz_1:row.quiz1?row.quiz1:0,
+          quiz_2:row.quiz2?row.quiz2:0,
+          lab:row.lab?row.lab:0,
+          total:row.total?row.total:0,
+        }
+      })
+    }
+    for (const file of files) {
+      fs.unlink(path.join(directoryPath, file), (err) => {
+        if (err) {
+          console.log("error while deleting");
+        }else{
+          console.log("deleted succesfully")
+        }
+      });
+    }
+
+    return res.json({
+      response : "updated marks succesfully"
+    })
+
+  }catch(err:any){
+    return res.json(
+      {err:err.message}
+    )
+  }
+}
