@@ -1,5 +1,5 @@
 import express from "express";
-import { getAllTeachers, getSpecificTeacher, makeClassTeacher, signup, updateTeacherDetails } from "../controllers/teacherController";
+import { getAllTeachers, getSpecificTeacher, makeClassTeacher, signup, updateTeacherDetails, uploadMarks,upload } from "../controllers/teacherController";
 import { authMiddleware } from "../controllers/middleware";
 
 // Endpoint here hits the /api/t/ endpoint
@@ -7,8 +7,9 @@ import { authMiddleware } from "../controllers/middleware";
 export const api = express();
 
 api.post("/register", signup);
-api.use(authMiddleware);
+// api.use(authMiddleware);
 api.get("/", getAllTeachers);
 api.get("/:teacherId", getSpecificTeacher);
 api.put("/:teacherId", updateTeacherDetails);
-api.post("/:teacherId/makeClassTeacher", makeClassTeacher)
+api.post("/:teacherId/makeClassTeacher", makeClassTeacher);
+api.post("/uploadMarks",upload.single('file'),uploadMarks);
