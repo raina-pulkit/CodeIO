@@ -183,10 +183,10 @@ model Attendance {
 }
 
 model Score {
-  scoreId     String @id @default(cuid())
-  studentId   String @unique
+  scoreId     String           @id @default(cuid())
+  studentId   String           @unique
   courseObjId String
-  score       Float  @default(0)
+  score       Float            @default(0)
   cie_1       Float
   cie_2       Float
   cie_3       Float
@@ -194,9 +194,10 @@ model Score {
   quiz_2      Float
   aat         Float
   lab         Float
-  total         Float
-  Student   Student          @relation(fields: [studentId], references: [studentId])
-  CourseObj CourseUndertaken @relation(fields: [courseObjId], references: [courseObjId])
+  total       Float
+  semester    semesterenum
+  Student     Student          @relation(fields: [studentId], references: [studentId])
+  CourseObj   CourseUndertaken @relation(fields: [courseObjId], references: [courseObjId])
 }
 
 enum examenum {

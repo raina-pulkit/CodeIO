@@ -74,6 +74,8 @@ const LoginForm = () => {
     e?.preventDefault();
     const d = JSON.stringify(body);
 
+    console.log("LMAO d: ", d);
+
     try {
       const res = await axios.post(`/api/login`, d, {
         headers: {
@@ -157,7 +159,13 @@ const LoginForm = () => {
       <CardContent className="space-y-2">
         <Form {...form}>
           <form
-            onSubmit={handleSubmit(handleSubmitData)}
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSubmit(handleSubmitData, (e) => {
+                // e.preventDefault();
+                console.log("HI: ", e)
+              })();
+            }}
             className="flex flex-col gap-1"
           >
             <FormField

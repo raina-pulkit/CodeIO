@@ -25,7 +25,7 @@ export const addNewCourse = async (req: Request, res: Response) => {
       err: "only admin is allowed to add course!",
     });
 
-  const { courseName, courseCode } = req.body;
+  const { courseName, courseCode, integratedLab, courseUndertaken } = req.body;
   try {
     const exists = await prisma.course.findFirst({
       where: {
@@ -41,6 +41,8 @@ export const addNewCourse = async (req: Request, res: Response) => {
       data: {
         courseName,
         courseCode,
+        integratedLab,
+        courseUndertaken
       },
     });
 

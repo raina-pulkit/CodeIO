@@ -7,7 +7,7 @@ import { authMiddleware } from "../controllers/middleware";
 export const api = express();
 
 api.post("/register", signup);
-// api.use(authMiddleware);
+api.use(authMiddleware);
 api.get("/", getAllTeachers);
 api.get("/:teacherId", getSpecificTeacher);
 api.put("/:teacherId", updateTeacherDetails);

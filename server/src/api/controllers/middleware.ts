@@ -22,7 +22,6 @@ export async function authMiddleware(
   const token = req.headers.authorization || "";
   console.log("TOKE: ", token);
   
-
   try {
     const jwtToken = token.split(" ")[1];
     const response = jwt?.verify(

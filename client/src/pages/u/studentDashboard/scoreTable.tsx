@@ -47,7 +47,7 @@ const ScoreTable = () => {
                 </TableCell>
                 <TableCell className="hidden sm:table-cell">
                   <Badge className="text-xs" variant="secondary">
-                    CIE 1
+                    CIE 2
                   </Badge>
                 </TableCell>
                 <TableCell className="text-xl">250.00</TableCell>

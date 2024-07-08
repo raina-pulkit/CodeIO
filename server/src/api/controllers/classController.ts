@@ -97,7 +97,7 @@ export const addStudent = async (req: Request, res: Response) => {
         err: "class does not exist!",
       });
 
-    const prevStudents: Array<string> = exists.studentIds;
+    const prevStudents: Array<string> = exists.studentIds.map((e) => e.studentId);
     prevStudents.forEach((elem) => {
       if(elem === studentId) throw new Error("student already added!");
     })

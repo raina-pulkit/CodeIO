@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import prisma from "../../utils/db";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+
 export const login = async (req: Request, res: Response) => {
   const { email, usn, password } = req.body;
 
@@ -61,7 +62,7 @@ export const login = async (req: Request, res: Response) => {
       
 
       if (!result) {
-      console.log("RESULT LMAO: ", result);
+        console.log("RESULT LMAO: ", result);
         const resultStud = await prisma.student.findUnique({
           where: { email },
         });

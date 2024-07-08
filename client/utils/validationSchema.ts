@@ -8,11 +8,12 @@ export const userLoginSchema = z
       .max(32, "Password must be less than 32 characters"),
     email: z
       .string()
-      .or(z.object({ email: z.string().email() })),
+      .or(z.string().email()),
     usn: z
       .string()
       .or(
-        z.object({ usn: z.string().length(10, "USN must be of length 10!") })
+        // z.object({ usn: z.string().length(10, "USN must be of length 10!") })
+        z.string().length(10, "USN must be of length 10!")
       ),
   })
   .superRefine(({ email, usn }, context) => {
