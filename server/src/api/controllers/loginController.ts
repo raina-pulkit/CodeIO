@@ -5,8 +5,9 @@ import jwt from "jsonwebtoken";
 
 export const login = async (req: Request, res: Response) => {
   const { email, usn, password } = req.body;
-
-  if (usn !== "" && email !== "")
+  console.log(usn + " "+ email);
+  
+  if (usn !== undefined && email !== undefined)
     return res.status(400).json({ error: "use only email or usn, not both" });
 
   if (usn) {
@@ -101,7 +102,9 @@ export const login = async (req: Request, res: Response) => {
       }
 
       const match = await bcrypt.compare(password, result.password);
+      console.log("test");
       if (match) {
+        console.log("test2");
         const token = jwt.sign(
           {
             teacherId: result.teacherId,
@@ -112,6 +115,7 @@ export const login = async (req: Request, res: Response) => {
           process.env.JWT_SECRET as string,
           { expiresIn: "1h" }
         );
+
         return res.status(200).json({
           accessToken: `${token}`,
           userId: result.teacherId,

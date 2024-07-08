@@ -288,10 +288,22 @@ export const uploadMarks = async (req: Request, res: Response) => {
 				});
 			}
 			const studentId = response.studentId;
+			const temp = await prisma.courseUndertaken.findFirst({
+				where:{
+					courseCode:row.courseCode
+				}
+			});
+
+			const scoreDetails = await prisma.score.findFirst({
+				where:{
+					studentId,
+					courseObjId:temp?.courseObjId
+				}
+			})
 
 			const newResponse = await prisma.score.upsert({
 				where: {
-					studentId,
+					scoreId : scoreDetails?.scoreId
 				},
 				update: {
 					cie_1: row.cie1,
@@ -302,7 +314,7 @@ export const uploadMarks = async (req: Request, res: Response) => {
 					quiz_2: row.quiz2 ? row.quiz2 : 0,
 					lab: row.lab ? row.lab : 0,
 					total: row.total ? row.total : 0,
-          semester: row.semester
+          			semester: row.semester
 				},
 				create: {
 					studentId,
@@ -315,7 +327,7 @@ export const uploadMarks = async (req: Request, res: Response) => {
 					quiz_2: row.quiz2 ? row.quiz2 : 0,
 					lab: row.lab ? row.lab : 0,
 					total: row.total ? row.total : 0,
-          semester: row.semester
+          			semester: row.semester
 				},
 			});
 		}
