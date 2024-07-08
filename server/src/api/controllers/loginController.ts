@@ -5,9 +5,9 @@ import jwt from "jsonwebtoken";
 
 export const login = async (req: Request, res: Response) => {
   const { email, usn, password } = req.body;
-  console.log(usn + " "+ email);
+  console.log(usn + " " + email);
   
-  if (usn !== undefined && email !== undefined)
+  if (usn !== "" && email !== "")
     return res.status(400).json({ error: "use only email or usn, not both" });
 
   if (usn) {
@@ -25,6 +25,8 @@ export const login = async (req: Request, res: Response) => {
       }
 
       const match = await bcrypt.compare(password, result.password);
+      console.log("Match is: ", match);
+      
 
       if (match) {
         const token = jwt.sign(
@@ -53,6 +55,8 @@ export const login = async (req: Request, res: Response) => {
     }
   } else {
     try {
+      console.log("HERE");
+      
       const result = await prisma.teacher.findUnique({
         where: {
           email,
@@ -126,6 +130,8 @@ export const login = async (req: Request, res: Response) => {
           err: "invalid credentials!",
         });
     } catch (e: any) {
+      console.log(e);
+      
       return res.status(500).json({
         err: "error: " + e.message,
       });

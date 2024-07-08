@@ -1,135 +1,81 @@
-import { Badge } from "@/components/ui/badge"
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
-import { TableHeader, TableRow, TableHead, TableBody, TableCell, Table } from "@/components/ui/table"
-import { TabsContent } from "@/components/ui/tabs"
+import { Badge } from "@/components/ui/badge";
+import {
+	Card,
+	CardHeader,
+	CardTitle,
+	CardDescription,
+	CardContent,
+} from "@/components/ui/card";
+import {
+	TableHeader,
+	TableRow,
+	TableHead,
+	TableBody,
+	TableCell,
+	Table,
+} from "@/components/ui/table";
+import { TabsContent } from "@/components/ui/tabs";
+import { ScoreProps } from "types";
 
-const EligibilityTable = () => {
-  return (
-	<TabsContent value="eligibility">
-      <Card x-chunk="dashboard-05-chunk-3">
-        <CardHeader className="px-7">
-          <CardTitle>Eligibility</CardTitle>
-          <CardDescription>Eligibility Status of all courses</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Table className="text-center">
-            <TableHeader>
-              <TableRow className="bg-accent">
-                <TableHead className="text-center">Course Name</TableHead>
-				<TableHead className="hidden sm:table-cell text-center">
-                  Score
-                </TableHead>
-                <TableHead className="hidden sm:table-cell text-center ">
-                  Eligibility
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              <TableRow>
-                <TableCell>
-                  <div className="font-medium">Liam Johnson</div>
-                  <div className="hidden text-sm text-muted-foreground md:inline">
-                    liam@example.com
-                  </div>
-                </TableCell>
-                <TableCell className="text-xl">250.00</TableCell>
-				<TableCell className="hidden sm:table-cell">
-                  <Badge className="text-xs" variant="destructive">
-                    Not Eligible
-                  </Badge>
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>
-                  <div className="font-medium">Olivia Smith</div>
-                  <div className="hidden text-sm text-muted-foreground md:inline ">
-                    olivia@example.com
-                  </div>
-                </TableCell>
-                <TableCell className="text-xl">150.00</TableCell>
-				<TableCell className="hidden sm:table-cell">
-                  <Badge className="text-xs bg-green-500 " variant="outline">
-                    Eligible
-                  </Badge>
-                </TableCell>
-              </TableRow>
+const EligibilityTable = ({ scores }: { scores: Array<ScoreProps> | null }) => {
+	console.log("MAINSCORES ARE ", scores);
 
-              <TableRow>
-                <TableCell>
-                  <div className="font-medium">Noah Williams</div>
-                  <div className="hidden text-sm text-muted-foreground md:inline">
-                    noah@example.com
-                  </div>
-                </TableCell>
-                <TableCell className="text-xl">350.00</TableCell>
-				<TableCell className="hidden sm:table-cell">
-                  <Badge className="text-xs bg-green-500" variant="secondary">
-                    Eligible
-                  </Badge>
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>
-                  <div className="font-medium">Emma Brown</div>
-                  <div className="hidden text-sm text-muted-foreground md:inline">
-                    emma@example.com
-                  </div>
-                </TableCell>
-                <TableCell className="text-xl">450.00</TableCell>
-				<TableCell className="hidden sm:table-cell">
-                  <Badge className="text-xs bg-green-500" variant="secondary">
-                    Eligible
-                  </Badge>
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>
-                  <div className="font-medium">Liam Johnson</div>
-                  <div className="hidden text-sm text-muted-foreground md:inline">
-                    liam@example.com
-                  </div>
-                </TableCell>
-                <TableCell className="text-xl">250.00</TableCell>
-				<TableCell className="hidden sm:table-cell">
-                  <Badge className="text-xs bg-green-500" variant="secondary">
-                    Eligible
-                  </Badge>
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>
-                  <div className="font-medium">Olivia Smith</div>
-                  <div className="hidden text-sm text-muted-foreground md:inline">
-                    olivia@example.com
-                  </div>
-                </TableCell>
-                <TableCell className="text-xl">150.00</TableCell>
-				<TableCell className="hidden sm:table-cell">
-                  <Badge className="text-xs bg-green-500" variant="outline">
-                    Eligible
-                  </Badge>
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>
-                  <div className="font-medium">Emma Brown</div>
-                  <div className="hidden text-sm text-muted-foreground md:inline">
-                    emma@example.com
-                  </div>
-                </TableCell>
-                <TableCell className="text-xl">450.00</TableCell>
-				<TableCell className="hidden sm:table-cell">
-                  <Badge className="text-xs bg-green-500" variant="secondary">
-                    Eligible
-                  </Badge>
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
-    </TabsContent>
-  )
-}
+  // const scoreCalc = (item: ScoreProps) => {
+  //   const score = Math.max(item.cie_1 + item.cie_2, item.cie_2 + item.cie_3, item.cie_1 + item.cie_3) + Math.max(item.quiz_1, item.quiz_2) + item.lab + item.aat
+  //   return score;
+  // }
 
-export default EligibilityTable
+	return (
+		<TabsContent value="eligibility">
+			<Card x-chunk="dashboard-05-chunk-3">
+				<CardHeader className="px-7">
+					<CardTitle>Eligibility</CardTitle>
+					<CardDescription>Eligibility Status of all courses</CardDescription>
+				</CardHeader>
+				<CardContent>
+					<Table className="text-center">
+						<TableHeader>
+							<TableRow className="bg-accent">
+								<TableHead className="text-center">Course Name</TableHead>
+								<TableHead className="hidden sm:table-cell text-center">
+									Score
+								</TableHead>
+								<TableHead className="hidden sm:table-cell text-center ">
+									Eligibility
+								</TableHead>
+							</TableRow>
+						</TableHeader>
+						<TableBody>
+							{scores ? (
+								scores.map((item: ScoreProps, ind: number) => (
+									<TableRow key={ind}>
+										<TableCell>
+											<div className="font-medium">{item.CourseObj.course.courseCode}</div>
+											<div className="hidden text-sm text-muted-foreground md:inline">
+												{item.CourseObj.course.courseName}
+											</div>
+										</TableCell>
+										<TableCell className="text-xl">{item.total}</TableCell>
+										<TableCell className="hidden sm:table-cell">
+											<Badge className="text-xs" variant={(item.total >= 20) ? "default" : "destructive"}>
+												{(item.total >= 20) ? "Eligible" : "Not Eligible"}
+											</Badge>
+										</TableCell>
+									</TableRow>
+								))
+							) : (
+								<TableRow>
+									<TableCell colSpan={3} className="text-center">
+										NO SCORES YET!
+									</TableCell>
+								</TableRow>
+							)}
+						</TableBody>
+					</Table>
+				</CardContent>
+			</Card>
+		</TabsContent>
+	);
+};
+
+export default EligibilityTable;

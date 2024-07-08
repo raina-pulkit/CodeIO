@@ -3,6 +3,7 @@ import {
   getAllStudents,
   getSpecificStudent,
   getSpecificStudentByUsn,
+  getSpecificStudentScores,
   signup,
   updateStudentDetails,
 } from "../controllers/studentController";
@@ -18,3 +19,4 @@ api.get("/", getAllStudents);
 api.get("/:studentId", getSpecificStudent);
 api.get("/usn/:usn", getSpecificStudentByUsn);
 api.put("/:studentId", updateStudentDetails);
+api.get("/scores/:studentId", getSpecificStudentScores)

@@ -14,3 +14,42 @@ export interface AuthOptions {
   userId: string;
   userRole: "student" | "teacher" | "admin";
 }
+
+export interface Attendance {
+  classesAttended: number;
+  classesConducted: number;
+}
+
+export interface Course {
+  courseCode: string;
+  courseName: string;
+}
+
+export interface CourseUndertaken {
+  courseObjId: string;
+  teacherId: string;
+  classId: string;
+  attendance: Attendance;
+  course: Course;
+}
+
+export interface ScoreProps {
+  CourseObj: CourseUndertaken
+  studentId: string;
+  score: number;
+  cie_1: number;
+  cie_2: number;
+  cie_3: number;
+  quiz_1: number;
+  quiz_2: number;
+  aat: number;
+  lab: number;
+  total: number;
+  semester: string;
+}
+
+export interface ScoreTableProps {
+  CourseObj: CourseUndertaken;
+  examType: string;
+  score: number;
+}

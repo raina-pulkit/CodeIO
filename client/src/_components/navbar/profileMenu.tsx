@@ -108,6 +108,7 @@ const ProfileMenu = () => {
             variant={"ghost"}
             onClick={() => {
               setLoading(true);
+              localStorage.removeItem("accessToken");
               signOut();
               navigate("/")
             }}

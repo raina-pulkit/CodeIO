@@ -125,8 +125,11 @@ const LoginForm = () => {
                 userRole: res.data.userRole,
               },
             })
-          )
+          ) {
+            localStorage.setItem("accessToken", res.data.accessToken);
             navigate("/u");
+          }
+            
           else {
             errorShower(
               "Error!",
