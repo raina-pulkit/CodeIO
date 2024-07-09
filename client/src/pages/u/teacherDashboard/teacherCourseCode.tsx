@@ -42,7 +42,7 @@ const TeacherCourseCode = () => {
 		const fun = async () => {
 			const response = await axios.get(`/api/c`, {
 				headers: {
-					authorization: localStorage.getItem("accessToken"),
+					Authorization: localStorage.getItem("accessToken"),
 				},
 			});
 			setData(response.data);

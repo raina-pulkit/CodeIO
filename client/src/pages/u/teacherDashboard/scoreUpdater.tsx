@@ -42,8 +42,6 @@ const ScoreUpdater = () => {
 	const user: AuthOptions | null = useAuthUser();
 	const { toast } = useToast();
 
-	console.log("USERRRR: ", user);
-
 	const navigate = useNavigate();
 	if (!user) navigate("/");
 
@@ -62,8 +60,6 @@ const ScoreUpdater = () => {
 						},
 					}
 				);
-
-				console.log("RESPONES DATA: ", response.data);
 
 				if (response.status === 200) {
 					setMainScores(() => response.data);
@@ -86,7 +82,7 @@ const ScoreUpdater = () => {
 			}
 		};
 		res();
-	}, [classId, courseCode, user]);
+	}, [classId, courseCode, navigate, toast, user]);
 
 	const eligibility = (num: number): boolean => {
 		return num >= 20;

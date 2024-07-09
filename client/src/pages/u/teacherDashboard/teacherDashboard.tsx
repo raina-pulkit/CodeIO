@@ -24,7 +24,7 @@ const TeacherDashboard = () => {
 		const fun = async () => {
 			const response = await axios.get(`/api/courses`, {
 				headers: {
-					authorization: localStorage.getItem("accessToken"),
+					Authorization: localStorage.getItem("accessToken"),
 				},
 			});
 			setData(response.data);
