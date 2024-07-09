@@ -137,7 +137,7 @@ export const getSpecificTeacher = async (req: Request, res: Response) => {
   
 	if (userRole !== "admin" && (teacherId != req.userId))
 		return res.status(403).json({
-			err: "neither are you admin, nor requesting for your own info",
+			err: "neither are you admin LMAO, nor requesting for your own info",
 		});
 
 	try {
@@ -348,3 +348,65 @@ export const uploadMarks = async (req: Request, res: Response) => {
 		return res.json({ err: err.message });
 	}
 };
+
+
+export const getClassScores = async (req: Request, res: Response) => {
+	console.log("HERE");
+	
+	const { userRole, userId } = req;
+	const courseCode: string = req.query.courseCode as string;
+	const classId: string = req.query.classId as string;
+
+	let courseObj: string;
+	try {
+		const result = await prisma.courseUndertaken.findFirst({
+			where: {
+				AND: {
+					courseCode,
+					classId
+				}
+			},
+			select: {
+				teacherId: true,
+				courseObjId: true
+			}
+		});
+
+		console.log("RESULT: ", result);
+		
+		
+		if(!result) throw new Error("you are not allowed to access this class");
+
+		if((userRole !== "admin") && (result.teacherId !== userId)) throw new Error("unauthorized access!");
+
+		courseObj = result.courseObjId;
+	}
+	catch (e: any) {
+		return res.status(403).json({
+			err: "Error: " + e.message
+		})
+	}
+
+	try {
+		const response = await prisma.score.findMany({
+			where: {
+				courseObjId: courseObj
+			},
+			include: {
+				Student: true,
+				CourseObj: {
+					include: {
+						course: true
+					}
+				}
+			}
+		});
+
+		return res.status(200).json(response);
+	}
+	catch (e: any) {
+		return res.status(400).json({
+			err: "Error: " + e.message
+		})
+	}
+}

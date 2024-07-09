@@ -36,6 +36,7 @@ const ScoreUpdater = () => {
 	const [mainScores, setMainScores] = useState<Array<ScoreProps> | null>(null);
 	const [scores, setScores] = useState<Array<ScoreProps> | null>(null);
 	const [filter, setFilter] = useState<number>(0);
+	const [loading, setLoading] = useState(false);
 
 	const user: AuthOptions | null = useAuthUser();
 	const { toast } = useToast();
@@ -46,6 +47,7 @@ const ScoreUpdater = () => {
 	if (!user) navigate("/");
 
 	useEffect(() => {
+		setLoading(true);
 		const res = async () => {
 			if (!user) return;
 
@@ -71,9 +73,11 @@ const ScoreUpdater = () => {
 				});
 				setTimeout(() => navigate("/u"), 3000);
 			}
+
+			setLoading(false);
 		};
 		res();
-	}, [classId, courseCode, mainScores, user]);
+	}, [classId, courseCode, user]);
 
 	const eligibility = (num: number): boolean => {
 		return num >= 20;
@@ -171,7 +175,13 @@ const ScoreUpdater = () => {
 							</TableRow>
 						</TableHeader>
 						<TableBody>
-							{/* {scores ? (
+							{loading ? (
+								<TableRow>
+									<TableCell colSpan={10} className="text-center">
+										<span className="loading loading-spinner loading-lg bg-white"></span>
+									</TableCell>
+								</TableRow>
+							) : scores ? (
 								scores?.map((score: ScoreProps, ind: number) => (
 									<TableRow key={ind}>
 										<TableCell>{score.Student.name}</TableCell>
@@ -182,15 +192,15 @@ const ScoreUpdater = () => {
 										<TableCell>{score.quiz_2}</TableCell>
 										<TableCell>{score.aat}</TableCell>
 										<TableCell>{score.lab}</TableCell>
-										<TableCell>{score.total}</TableCell>
+										<TableCell>{score.score}</TableCell>
 										<TableCell>
 											<Badge
 												className="text-xs"
 												variant={
-													eligibility(score.total) ? "default" : "destructive"
+													eligibility(score.score) ? "default" : "destructive"
 												}
 											>
-												{eligibility(score.total) ? "Eligible" : "Not Eligible"}
+												{eligibility(score.score) ? "Eligible" : "Not Eligible"}
 											</Badge>
 										</TableCell>
 									</TableRow>
@@ -201,24 +211,7 @@ const ScoreUpdater = () => {
 										NO SCORES YET!
 									</TableCell>
 								</TableRow>
-							)} */}
-
-							<TableRow>
-								<TableCell>Pulkit Raina</TableCell>
-								<TableCell>Pulkit Raina</TableCell>
-								<TableCell>Pulkit Raina</TableCell>
-								<TableCell>Pulkit Raina</TableCell>
-								<TableCell>Pulkit Raina</TableCell>
-								<TableCell>Pulkit Raina</TableCell>
-								<TableCell>Pulkit Raina</TableCell>
-								<TableCell>Pulkit Raina</TableCell>
-								<TableCell>Pulkit Raina</TableCell>
-								<TableCell>
-									<Badge className="text-xs" variant={"default"}>
-										Eligible
-									</Badge>
-								</TableCell>
-							</TableRow>
+							)}
 						</TableBody>
 					</Table>
 				</CardContent>
