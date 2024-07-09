@@ -37,7 +37,7 @@ export async function authMiddleware(
     
     // response.userRole && (response.studentId || response.teacherId)
 
-    if (response.userId) {
+    if (response.userId || (response.userRole && (response.studentId || response.teacherId))) {
       next();
     } else {
       console.log("LMAO HERE");

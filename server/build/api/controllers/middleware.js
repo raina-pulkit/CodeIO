@@ -32,7 +32,7 @@ function authMiddleware(req, res, next) {
                 req.userId = response.adminId;
             console.log("RESPOSE: ", response);
             // response.userRole && (response.studentId || response.teacherId)
-            if (response.userId) {
+            if (response.userId || (response.userRole && (response.studentId || response.teacherId))) {
                 next();
             }
             else {
