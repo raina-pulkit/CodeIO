@@ -11,7 +11,7 @@ const ClassTaught = () => {
 	return (
 		<div
 			className="mb-4 py-5 px-10 bg-slate-600 rounded-lg hover:scale-95 active:scale-90 transition-all duration-200 cursor-pointer flex flex-col justify-center items-center"
-			onClick={() => navigate(`/u/COURSE_CODE/score-update/CLASS_SECtION`)}
+			onClick={() => navigate(`/u/22CS6PCML/score-update/1`)}
 		>
 			<span>CLASS SECTION</span>
 			<span>(BRANCH NAME)</span>
