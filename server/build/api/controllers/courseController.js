@@ -16,13 +16,33 @@ exports.createUndertaking = exports.addNewCourse = exports.getAllCourses = void 
 const db_1 = __importDefault(require("../../utils/db"));
 const getAllCourses = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { userRole } = req;
+    console.log("ROLE ISS: ", userRole);
     if (userRole === "student")
         return res.status(403).json({
             err: "not authorized!",
         });
+    const teacherId = req.userId;
     try {
-        const response = yield db_1.default.course.findMany();
-        return res.status(200).json(response);
+        const response = yield db_1.default.courseUndertaken.findMany({
+            where: {
+                teacherId
+            }
+        });
+        var courseCodes = [];
+        for (let i = 0; i < response.length; i++) {
+            courseCodes.push(response[i].courseCode);
+        }
+        var courseNames = [];
+        for (let i = 0; i < response.length; i++) {
+            const resp = yield db_1.default.course.findFirst({
+                where: {
+                    courseCode: courseCodes[i]
+                }
+            });
+            const courseName = resp === null || resp === void 0 ? void 0 : resp.courseName;
+            courseNames.push(courseName);
+        }
+        return res.status(200).json({ courseCodes, courseNames });
     }
     catch (e) {
         return res.status(404).json({

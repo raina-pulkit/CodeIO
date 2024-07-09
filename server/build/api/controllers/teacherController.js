@@ -35,7 +35,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.uploadMarks = exports.makeClassTeacher = exports.updateTeacherDetails = exports.getSpecificTeacher = exports.getAllTeachers = exports.signup = exports.upload = void 0;
+exports.getClassScores = exports.uploadMarks = exports.makeClassTeacher = exports.updateTeacherDetails = exports.getSpecificTeacher = exports.getAllTeachers = exports.signup = exports.upload = void 0;
 const db_1 = __importDefault(require("../../utils/db"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const multer_1 = __importDefault(require("multer"));
@@ -164,7 +164,7 @@ const getSpecificTeacher = (req, res) => __awaiter(void 0, void 0, void 0, funct
     console.log(userRole, teacherId, req.userId, userRole);
     if (userRole !== "admin" && (teacherId != req.userId))
         return res.status(403).json({
-            err: "neither are you admin, nor requesting for your own info",
+            err: "neither are you admin LMAO, nor requesting for your own info",
         });
     try {
         const result = yield db_1.default.teacher.findMany({
@@ -392,3 +392,57 @@ const uploadMarks = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     }
 });
 exports.uploadMarks = uploadMarks;
+const getClassScores = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("HERE");
+    const { userRole, userId } = req;
+    const courseCode = req.query.courseCode;
+    const classId = req.query.classId;
+    let courseObj;
+    try {
+        const result = yield db_1.default.courseUndertaken.findFirst({
+            where: {
+                AND: {
+                    courseCode,
+                    classId
+                }
+            },
+            select: {
+                teacherId: true,
+                courseObjId: true
+            }
+        });
+        console.log("RESULT: ", result);
+        if (!result)
+            throw new Error("you are not allowed to access this class");
+        if ((userRole !== "admin") && (result.teacherId !== userId))
+            throw new Error("unauthorized access!");
+        courseObj = result.courseObjId;
+    }
+    catch (e) {
+        return res.status(403).json({
+            err: "Error: " + e.message
+        });
+    }
+    try {
+        const response = yield db_1.default.score.findMany({
+            where: {
+                courseObjId: courseObj
+            },
+            include: {
+                Student: true,
+                CourseObj: {
+                    include: {
+                        course: true
+                    }
+                }
+            }
+        });
+        return res.status(200).json(response);
+    }
+    catch (e) {
+        return res.status(400).json({
+            err: "Error: " + e.message
+        });
+    }
+});
+exports.getClassScores = getClassScores;

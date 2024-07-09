@@ -76,6 +76,7 @@ const ScoreUpdater = () => {
 					setTimeout(() => navigate("/u"), 3000);
 				}
 
+				console.log(scores);
 				setLoading(false);
 			} catch (e) {
 				setLoading(false);
@@ -215,7 +216,7 @@ const ScoreUpdater = () => {
 									</TableCell>
 								</TableRow>
 							) : scores ? (
-								scores?.map((score: ScoreProps, ind: number) => (
+								scores.map((score: ScoreProps, ind: number) => (
 									<TableRow key={ind}>
 										<TableCell>{score.Student.name}</TableCell>
 										<TableCell>{score.cie_1}</TableCell>

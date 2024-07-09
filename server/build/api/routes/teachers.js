@@ -12,6 +12,7 @@ exports.api = (0, express_1.default)();
 exports.api.post("/register", teacherController_1.signup);
 exports.api.use(middleware_1.authMiddleware);
 exports.api.get("/", teacherController_1.getAllTeachers);
+exports.api.get("/scores", teacherController_1.getClassScores);
 exports.api.get("/:teacherId", teacherController_1.getSpecificTeacher);
 exports.api.put("/:teacherId", teacherController_1.updateTeacherDetails);
 exports.api.post("/:teacherId/makeClassTeacher", teacherController_1.makeClassTeacher);

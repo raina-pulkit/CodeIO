@@ -1,8 +1,16 @@
 import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 import { useNavigate, useParams } from "react-router-dom";
 import { AuthOptions } from "types";
+import { useState,useEffect } from "react";
+import axios from "axios";
 
-const ClassTaught = () => {
+interface dataa{
+	classId:string;
+	section:string;
+	semester:string;
+}
+
+const ClassTaught = ({item, courseCode}: {item: dataa; courseCode: string;}) => {
 	const navigate = useNavigate();
   const user: AuthOptions | null = useAuthUser();
 
@@ -11,27 +19,51 @@ const ClassTaught = () => {
 	return (
 		<div
 			className="mb-4 py-5 px-10 bg-slate-600 rounded-lg hover:scale-95 active:scale-90 transition-all duration-200 cursor-pointer flex flex-col justify-center items-center"
-			onClick={() => navigate(`/u/22CS6PCML/score-update/1`)}
+			onClick={() => navigate(`/u/${courseCode}/score-update/${item.classId}`)}
 		>
-			<span>CLASS SECTION</span>
-			<span>(BRANCH NAME)</span>
+			<span>{item.section}</span>
+			<span>{item.semester}</span>
 		</div>
 	);
 };
 
+
 const TeacherCourseCode = () => {
-	const { courseCode } = useParams();
+	const cc = useParams();
+	const courseCode: string = cc.courseCode as string;
 	console.log("Code is: ", courseCode);
+
+
+
+	const [data, setData] = useState<Array<dataa> | null>(null);
+
+	useEffect(() => {
+		const fun = async () => {
+		  const response = await axios.get(`/api/c`, {
+			headers: {
+			  authorization: localStorage.getItem("token"),
+			},
+		  });
+		  console.log(response);
+		//   setCodes(response.data.courseCodes);
+		//   setNames(response.data.courseNames);
+		setData(response.data);
+		};
+		fun();
+	  }, []);
 
 	return (
 		<div className="flex flex-wrap py-10 px-14 md:px-40 gap-10 justify-center items-center">
+			{
+				data && data?.map((item: dataa,index: number)=> <ClassTaught item={item} courseCode={courseCode}/>)
+			}
+			{/* <ClassTaught />
 			<ClassTaught />
 			<ClassTaught />
 			<ClassTaught />
 			<ClassTaught />
 			<ClassTaught />
-			<ClassTaught />
-			<ClassTaught />
+			<ClassTaught /> */}
 		</div>
 	);
 };
