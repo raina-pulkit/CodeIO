@@ -20,7 +20,6 @@ export async function authMiddleware(
 	next: NextFunction
 ) {
 	const token = req.headers.authorization || "";
-	console.log("TOKE: ", token);
 
 	try {
 		const jwtToken = token.split(" ")[1];
@@ -33,10 +32,6 @@ export async function authMiddleware(
 		else if (response.teacherId) req.userId = response.teacherId;
 		else if (response.adminId) req.userId = response.adminId;
 
-		console.log("RESPOSE: ", response);
-
-		// response.userRole && (response.studentId || response.teacherId)
-
 		if (response.userRole && (response.studentId || response.teacherId)) {
 			next();
 		} else {
@@ -47,8 +42,6 @@ export async function authMiddleware(
 			});
 		}
 	} catch (e: any) {
-		console.log("HERERE");
-
 		return res.status(403).json({
 			err: "not authorized",
 		});

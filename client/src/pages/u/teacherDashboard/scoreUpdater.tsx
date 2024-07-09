@@ -76,7 +76,6 @@ const ScoreUpdater = () => {
 					setTimeout(() => navigate("/u"), 3000);
 				}
 
-				console.log(scores);
 				setLoading(false);
 			} catch (e) {
 				setLoading(false);

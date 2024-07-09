@@ -87,8 +87,6 @@ const StudentRegisterForm = () => {
         },
       });
 
-      console.log("LOGIN RESPONSE IS: ", res);
-
       if (!res || res === undefined || res.status == 403) {
         errorShower("Login error", "No response received from server!");
         return;
@@ -105,8 +103,6 @@ const StudentRegisterForm = () => {
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
-      console.log(e);
-
       errorShower("Error!", e.response.data.err as string);
     }
 

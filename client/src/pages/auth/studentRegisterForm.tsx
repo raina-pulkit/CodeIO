@@ -102,8 +102,6 @@ const StudentRegisterForm = () => {
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
-      console.log(e);
-
       errorShower("Error!", e.response.data.err as string);
     }
 

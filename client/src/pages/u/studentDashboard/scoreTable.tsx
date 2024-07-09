@@ -18,7 +18,6 @@ import { TabsContent } from "@/components/ui/tabs";
 import { ScoreTableProps } from "types";
 
 const ScoreTable = ({ scores }: { scores: Array<ScoreTableProps> | null }) => {
-	console.log("Scores: ", scores);
 
 	return (
 		<TabsContent value="scores">

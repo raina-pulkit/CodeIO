@@ -42,8 +42,6 @@ const StudentDashboard = () => {
       });
 
       const temp: Array<ScoreTableProps> = new Array(0);
-      console.log("RESPONES DATA: ", response.data);
-
       setMainScores(() => response.data);
       
       mainScores?.forEach((item: ScoreProps) => {

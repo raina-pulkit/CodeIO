@@ -21,8 +21,6 @@ const TeacherDashboard = () => {
 	const [data, setData] = useState<Array<CourseUndertaken> | null>(null);
 
 	useEffect(() => {
-    console.log("TOKEN IS: ", localStorage.getItem("accessToken"));
-    
 		const fun = async () => {
 			const response = await axios.get(`/api/courses`, {
 				headers: {

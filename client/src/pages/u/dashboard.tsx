@@ -8,7 +8,6 @@ import AdminDashboard from "./adminDashboard";
 const Dashboard = () => {
   const user: AuthOptions | null = useAuthUser();
   const navigate = useNavigate();
-  console.log("User: ", user);
   if (!user) navigate("/login");
   const { userRole } = user as AuthOptions;
 

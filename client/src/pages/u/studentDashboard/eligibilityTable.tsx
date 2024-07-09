@@ -18,12 +18,6 @@ import { TabsContent } from "@/components/ui/tabs";
 import { ScoreProps } from "types";
 
 const EligibilityTable = ({ scores }: { scores: Array<ScoreProps> | null }) => {
-	console.log("MAINSCORES ARE ", scores);
-
-  // const scoreCalc = (item: ScoreProps) => {
-  //   const score = Math.max(item.cie_1 + item.cie_2, item.cie_2 + item.cie_3, item.cie_1 + item.cie_3) + Math.max(item.quiz_1, item.quiz_2) + item.lab + item.aat
-  //   return score;
-  // }
 
 	return (
 		<TabsContent value="eligibility">

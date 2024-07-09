@@ -36,8 +36,6 @@ const ClassTaught = ({
 const TeacherCourseCode = () => {
 	const cc = useParams();
 	const courseCode: string = cc.courseCode as string;
-	console.log("Code is: ", courseCode);
-
 	const [data, setData] = useState<Array<dataa> | null>(null);
 
 	useEffect(() => {
@@ -47,7 +45,6 @@ const TeacherCourseCode = () => {
 					authorization: localStorage.getItem("accessToken"),
 				},
 			});
-			console.log(response);
 			setData(response.data);
 		};
 		fun();
