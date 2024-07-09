@@ -281,7 +281,6 @@ const uploadMarks = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     const worksheet = xlsx.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
     try {
         for (let row of worksheet) {
-            console.log(row.usn);
             const response = yield db_1.default.student.findFirst({
                 where: { usn: row.usn },
             });
@@ -290,47 +289,89 @@ const uploadMarks = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
                     err: "no such student exists",
                 });
             }
+            const teacherId = req.userId;
             const studentId = response.studentId;
+            console.log(teacherId);
+            console.log(row.courseCode);
             const temp = yield db_1.default.courseUndertaken.findFirst({
                 where: {
-                    courseCode: row.courseCode
+                    courseCode: row.courseCode,
+                    teacherId
                 }
             });
+            console.log(temp);
             const scoreDetails = yield db_1.default.score.findFirst({
                 where: {
                     studentId,
                     courseObjId: temp === null || temp === void 0 ? void 0 : temp.courseObjId
                 }
             });
-            const newResponse = yield db_1.default.score.upsert({
-                where: {
-                    scoreId: scoreDetails === null || scoreDetails === void 0 ? void 0 : scoreDetails.scoreId
-                },
-                update: {
-                    cie_1: row.cie1,
-                    cie_2: row.cie2,
-                    cie_3: row.cie3,
-                    aat: row.aat ? row.aat : 0,
-                    quiz_1: row.quiz1 ? row.quiz1 : 0,
-                    quiz_2: row.quiz2 ? row.quiz2 : 0,
-                    lab: row.lab ? row.lab : 0,
-                    total: row.total ? row.total : 0,
-                    semester: row.semester
-                },
-                create: {
-                    studentId,
-                    courseObjId: row.courseCode,
-                    cie_1: row.cie1,
-                    cie_2: row.cie2,
-                    cie_3: row.cie3,
-                    aat: row.aat ? row.aat : 0,
-                    quiz_1: row.quiz1 ? row.quiz1 : 0,
-                    quiz_2: row.quiz2 ? row.quiz2 : 0,
-                    lab: row.lab ? row.lab : 0,
-                    total: row.total ? row.total : 0,
-                    semester: row.semester
-                },
-            });
+            if (scoreDetails === null || scoreDetails === void 0 ? void 0 : scoreDetails.scoreId) {
+                const resp = yield db_1.default.score.update({
+                    data: {
+                        cie_1: row.cie1 ? row.cie1 : 0,
+                        cie_2: row.cie2 ? row.cie2 : 0,
+                        cie_3: row.cie3 ? row.cie3 : 0,
+                        aat: row.aat ? row.aat : 0,
+                        quiz_1: row.quiz1 ? row.quiz1 : 0,
+                        quiz_2: row.quiz2 ? row.quiz2 : 0,
+                        lab: row.lab ? row.lab : 0,
+                        total: row.total ? row.total : 0,
+                        semester: row.semester
+                    },
+                    where: {
+                        scoreId: scoreDetails === null || scoreDetails === void 0 ? void 0 : scoreDetails.scoreId
+                    }
+                });
+            }
+            else {
+                const courseObjId = temp === null || temp === void 0 ? void 0 : temp.courseObjId;
+                const resp = yield db_1.default.score.create({
+                    data: {
+                        studentId,
+                        courseObjId,
+                        cie_1: row.cie1 ? row.cie1 : 0,
+                        cie_2: row.cie2 ? row.cie2 : 0,
+                        cie_3: row.cie3 ? row.cie3 : 0,
+                        aat: row.aat ? row.aat : 0,
+                        quiz_1: row.quiz1 ? row.quiz1 : 0,
+                        quiz_2: row.quiz2 ? row.quiz2 : 0,
+                        lab: row.lab ? row.lab : 0,
+                        total: row.total ? row.total : 0,
+                        semester: row.semester
+                    }
+                });
+            }
+            console.log(row.semester);
+            // const newResponse = await prisma.score.upsert({
+            // 	where: {
+            // 		scoreId : scoreDetails?.
+            // 	},
+            // 	update: {
+            // 		cie_1: row.cie1?row.cie1:0,
+            // 		cie_2: row.cie2?row.cie2:0,
+            // 		cie_3: row.cie3?row.cie3:0,
+            // 		aat: row.aat ? row.aat : 0,
+            // 		quiz_1: row.quiz1 ? row.quiz1 : 0,
+            // 		quiz_2: row.quiz2 ? row.quiz2 : 0,
+            // 		lab: row.lab ? row.lab : 0,
+            // 		total: row.total ? row.total : 0,
+            // 		semester: row.semester
+            // 	},
+            // 	create: {
+            // 		studentId,
+            // 		courseObjId: row.courseCode,
+            // 		cie_1: row.cie1,
+            // 		cie_2: row.cie2,
+            // 		cie_3: row.cie3,
+            // 		aat: row.aat ? row.aat : 0,
+            // 		quiz_1: row.quiz1 ? row.quiz1 : 0,
+            // 		quiz_2: row.quiz2 ? row.quiz2 : 0,
+            // 		lab: row.lab ? row.lab : 0,
+            // 		total: row.total ? row.total : 0,
+            // 		semester: row.semester
+            // 	},
+            // });
         }
         for (const file of files) {
             fs.unlink(path.join(directoryPath, file), (err) => {

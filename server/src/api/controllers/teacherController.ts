@@ -6,6 +6,7 @@ import * as xlsx from "xlsx";
 import * as path from "path";
 import * as fs from "fs";
 import { semesterenum } from '@prisma/client'
+import jwt from "jsonwebtoken";
 
 const storage = multer.diskStorage({
 	destination: (req, file, cb) => {
@@ -278,7 +279,6 @@ export const uploadMarks = async (req: Request, res: Response) => {
 
 	try {
 		for (let row of worksheet) {
-			console.log(row.usn);
 			const response = await prisma.student.findFirst({
 				where: { usn: row.usn },
 			});
@@ -287,49 +287,94 @@ export const uploadMarks = async (req: Request, res: Response) => {
 					err: "no such student exists",
 				});
 			}
+			const teacherId = req.userId;
 			const studentId = response.studentId;
+			console.log(teacherId);
+			console.log(row.courseCode);
 			const temp = await prisma.courseUndertaken.findFirst({
 				where:{
-					courseCode:row.courseCode
+					courseCode:row.courseCode,
+					teacherId
 				}
 			});
+
+			console.log(temp);
 
 			const scoreDetails = await prisma.score.findFirst({
 				where:{
 					studentId,
 					courseObjId:temp?.courseObjId
 				}
-			})
-
-			const newResponse = await prisma.score.upsert({
-				where: {
-					scoreId : scoreDetails?.scoreId
-				},
-				update: {
-					cie_1: row.cie1,
-					cie_2: row.cie2,
-					cie_3: row.cie3,
-					aat: row.aat ? row.aat : 0,
-					quiz_1: row.quiz1 ? row.quiz1 : 0,
-					quiz_2: row.quiz2 ? row.quiz2 : 0,
-					lab: row.lab ? row.lab : 0,
-					total: row.total ? row.total : 0,
-          			semester: row.semester
-				},
-				create: {
-					studentId,
-					courseObjId: row.courseCode,
-					cie_1: row.cie1,
-					cie_2: row.cie2,
-					cie_3: row.cie3,
-					aat: row.aat ? row.aat : 0,
-					quiz_1: row.quiz1 ? row.quiz1 : 0,
-					quiz_2: row.quiz2 ? row.quiz2 : 0,
-					lab: row.lab ? row.lab : 0,
-					total: row.total ? row.total : 0,
-          			semester: row.semester
-				},
 			});
+
+
+			if(scoreDetails?.scoreId){
+				const resp = await prisma.score.update({
+					data:{
+						cie_1: row.cie1?row.cie1:0,
+						cie_2: row.cie2?row.cie2:0,
+						cie_3: row.cie3?row.cie3:0,
+						aat: row.aat ? row.aat : 0,
+						quiz_1: row.quiz1 ? row.quiz1 : 0,
+						quiz_2: row.quiz2 ? row.quiz2 : 0,
+						lab: row.lab ? row.lab : 0,
+						total: row.total ? row.total : 0,
+						semester: row.semester
+					},
+					where:{
+						scoreId:scoreDetails?.scoreId
+					}
+				})
+			}else{
+				const courseObjId = temp?.courseObjId as string;
+				const resp = await prisma.score.create({
+					data:{
+						studentId,
+						courseObjId,
+						cie_1: row.cie1?row.cie1:0,
+						cie_2: row.cie2?row.cie2:0,
+						cie_3: row.cie3?row.cie3:0,
+						aat: row.aat ? row.aat : 0,
+						quiz_1: row.quiz1 ? row.quiz1 : 0,
+						quiz_2: row.quiz2 ? row.quiz2 : 0,
+						lab: row.lab ? row.lab : 0,
+						total: row.total ? row.total : 0,
+						semester: row.semester
+					}
+				})
+			}
+
+			console.log(row.semester);
+
+			// const newResponse = await prisma.score.upsert({
+			// 	where: {
+			// 		scoreId : scoreDetails?.
+			// 	},
+			// 	update: {
+			// 		cie_1: row.cie1?row.cie1:0,
+			// 		cie_2: row.cie2?row.cie2:0,
+			// 		cie_3: row.cie3?row.cie3:0,
+			// 		aat: row.aat ? row.aat : 0,
+			// 		quiz_1: row.quiz1 ? row.quiz1 : 0,
+			// 		quiz_2: row.quiz2 ? row.quiz2 : 0,
+			// 		lab: row.lab ? row.lab : 0,
+			// 		total: row.total ? row.total : 0,
+          	// 		semester: row.semester
+			// 	},
+			// 	create: {
+			// 		studentId,
+			// 		courseObjId: row.courseCode,
+			// 		cie_1: row.cie1,
+			// 		cie_2: row.cie2,
+			// 		cie_3: row.cie3,
+			// 		aat: row.aat ? row.aat : 0,
+			// 		quiz_1: row.quiz1 ? row.quiz1 : 0,
+			// 		quiz_2: row.quiz2 ? row.quiz2 : 0,
+			// 		lab: row.lab ? row.lab : 0,
+			// 		total: row.total ? row.total : 0,
+          	// 		semester: row.semester
+			// 	},
+			// });
 		}
 		for (const file of files) {
 			fs.unlink(path.join(directoryPath, file), (err) => {

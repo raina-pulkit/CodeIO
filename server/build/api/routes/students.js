@@ -15,3 +15,4 @@ exports.api.get("/", studentController_1.getAllStudents);
 exports.api.get("/:studentId", studentController_1.getSpecificStudent);
 exports.api.get("/usn/:usn", studentController_1.getSpecificStudentByUsn);
 exports.api.put("/:studentId", studentController_1.updateStudentDetails);
+exports.api.get("/scores/:studentId", studentController_1.getSpecificStudentScores);
