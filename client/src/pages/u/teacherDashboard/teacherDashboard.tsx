@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { CourseUndertaken } from "types";
 
 const CourseCode = ({ code, name }: { code: string; name: string }) => {
 	const navigate = useNavigate();
@@ -17,30 +18,29 @@ const CourseCode = ({ code, name }: { code: string; name: string }) => {
 };
 
 const TeacherDashboard = () => {
-	const [codes, setCodes] = useState<Array<string> | null>(null);
-	const [names, setNames] = useState<Array<string> | null>(null);
+	const [data, setData] = useState<Array<CourseUndertaken> | null>(null);
 
 	useEffect(() => {
+    console.log("TOKEN IS: ", localStorage.getItem("accessToken"));
+    
 		const fun = async () => {
-			const response = await axios.get(`api/courses`, {
+			const response = await axios.get(`/api/courses`, {
 				headers: {
-					authorization: localStorage.getItem("token"),
+					authorization: localStorage.getItem("accessToken"),
 				},
 			});
-			setCodes(response.data.courseCodes);
-			setNames(response.data.courseNames);
+			setData(response.data);
 		};
 		fun();
 	}, []);
 	return (
 		<div className="flex flex-wrap py-10 px-14 md:px-40 gap-10 justify-center items-center">
-			{codes &&
-				names &&
-				codes.map((item: string, index: number) => {
+			{data &&
+				data.map((item: CourseUndertaken, index: number) => {
 					return (
 						<CourseCode
-							code={item}
-							name={names[index]}
+							code={item.course.courseCode}
+							name={item.course.courseName}
 							key={index}
 						></CourseCode>
 					);

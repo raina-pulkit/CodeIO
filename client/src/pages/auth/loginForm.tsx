@@ -102,7 +102,7 @@ const LoginForm = () => {
             {
               headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${res.data.accessToken}`,
+                Authorization: res.data.accessToken,
               },
             }
           );
@@ -126,7 +126,9 @@ const LoginForm = () => {
               },
             })
           ) {
-            localStorage.setItem("accessToken", res.data.accessToken);
+            console.log("Setting!");
+            
+            localStorage.setItem("accessToken", `Bearer ${res.data.accessToken}`);
             navigate("/u");
           }
             
@@ -255,7 +257,7 @@ const LoginForm = () => {
             >
               {buttonLoading ? (
                 <div className="h-full w-full flex justify-center items-center py-2">
-                  <span className="loading loading-spinner loading-md bg-white"></span>
+                  <span className="loading loading-spinner loading-md bg-white hover:bg-black"></span>
                 </div>
               ) : (
                 "Login"

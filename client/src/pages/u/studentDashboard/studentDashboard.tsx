@@ -37,7 +37,7 @@ const StudentDashboard = () => {
       const response: {data: Array<ScoreProps>} = await axios.get(`/api/s/scores/${user.userId}`, {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          Authorization: localStorage.getItem("accessToken"),
         },
       });
 

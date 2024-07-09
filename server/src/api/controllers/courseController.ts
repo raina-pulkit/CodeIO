@@ -14,27 +14,16 @@ export const getAllCourses = async (req: Request, res: Response) => {
     const teacherId = req.userId;
 
   try {
-    const response = await prisma.courseUndertaken.findMany({
+    const response: Array<CourseUndertaken> = await prisma.courseUndertaken.findMany({
       where:{
         teacherId
+      },
+      include: {
+        course: true
       }
     });
-    var courseCodes: Array<string>=[];
-
-    for(let i=0;i<response.length;i++){
-      courseCodes.push(response[i].courseCode)
-    }
-    var courseNames: Array<string>=[];
-    for(let i=0;i<response.length;i++){
-      const resp = await prisma.course.findFirst({
-        where:{
-          courseCode:courseCodes[i]
-        }
-      });
-      const courseName = resp?.courseName as string;
-      courseNames.push(courseName);
-    }
-    return res.status(200).json({courseCodes,courseNames} );
+    if(response) return res.status(200).json(response);
+    else throw new Error("no courses found!");
   } catch (e: any) {
     return res.status(404).json({
       err: "error: " + e.message,
