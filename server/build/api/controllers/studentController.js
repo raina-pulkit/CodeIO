@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateStudentDetails = exports.getSpecificStudentByUsn = exports.getSpecificStudent = exports.getAllStudents = exports.signup = void 0;
+exports.updateStudentDetails = exports.getSpecificStudentByUsn = exports.getSpecificStudentScores = exports.getSpecificStudent = exports.getAllStudents = exports.signup = void 0;
 const db_1 = __importDefault(require("../../utils/db"));
 const zod_1 = require("../../zod");
 const bcrypt_1 = __importDefault(require("bcrypt"));
@@ -88,7 +88,7 @@ const signup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 data: {
                     studentId: result.studentId,
                     admissionDate: yoj,
-                    currentSemester: allowed.currentSemester
+                    currentSemester: allowed.currentSemester,
                 },
             });
             yield db_1.default.adminAddedStudentEmail.update({
@@ -195,6 +195,35 @@ const getSpecificStudent = (req, res) => __awaiter(void 0, void 0, void 0, funct
     }
 });
 exports.getSpecificStudent = getSpecificStudent;
+const getSpecificStudentScores = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { studentId } = req.params;
+    const { userRole } = req;
+    if (!userRole || (userRole === "student" && studentId !== req.userId))
+        return res.status(403).json({
+            err: "you are neither admin nor requesting your information",
+        });
+    try {
+        const scores = yield db_1.default.score.findMany({
+            where: {
+                studentId,
+            },
+            include: {
+                CourseObj: {
+                    include: {
+                        course: true
+                    }
+                }
+            }
+        });
+        return res.status(200).json(scores);
+    }
+    catch (e) {
+        return res.status(400).json({
+            err: "unknown error fetching scores!",
+        });
+    }
+});
+exports.getSpecificStudentScores = getSpecificStudentScores;
 const getSpecificStudentByUsn = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { usn } = req.params;
     const { userRole } = req;

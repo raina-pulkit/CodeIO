@@ -19,7 +19,7 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, usn, password } = req.body;
     console.log(usn + " " + email);
-    if (usn !== undefined && email !== undefined)
+    if (usn !== "" && email !== "")
         return res.status(400).json({ error: "use only email or usn, not both" });
     if (usn) {
         try {
@@ -34,6 +34,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 });
             }
             const match = yield bcrypt_1.default.compare(password, result.password);
+            console.log("Match is: ", match);
             if (match) {
                 const token = jsonwebtoken_1.default.sign({
                     studentId: result.studentId,
@@ -60,6 +61,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
     else {
         try {
+            console.log("HERE");
             const result = yield db_1.default.teacher.findUnique({
                 where: {
                     email,
@@ -118,6 +120,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 });
         }
         catch (e) {
+            console.log(e);
             return res.status(500).json({
                 err: "error: " + e.message,
             });
