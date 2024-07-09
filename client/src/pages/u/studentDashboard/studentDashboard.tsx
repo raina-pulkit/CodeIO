@@ -96,7 +96,7 @@ const StudentDashboard = () => {
                 <span className="sr-only sm:not-sr-only">Filter</span>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent align="end" className="bg-white">
               <DropdownMenuLabel>Filter by</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuCheckboxItem checked={filter === 0} onClick={() => setFilter(() => 0)}>

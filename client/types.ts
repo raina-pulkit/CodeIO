@@ -33,6 +33,13 @@ export interface CourseUndertaken {
   course: Course;
 }
 
+export interface StudentProps {
+  studentId: string;
+  name: string;
+  email: string;
+  usn: string;
+}
+
 export interface ScoreProps {
   CourseObj: CourseUndertaken
   studentId: string;
@@ -46,6 +53,7 @@ export interface ScoreProps {
   lab: number;
   total: number;
   semester: string;
+  Student: StudentProps;
 }
 
 export interface ScoreTableProps {

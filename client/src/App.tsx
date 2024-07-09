@@ -7,6 +7,8 @@ import PageNotFound from "./pages/404-page";
 import NavBar from "./_components/navbar/navbar";
 import AuthOutlet from "@auth-kit/react-router/AuthOutlet";
 import Dashboard from "./pages/u/dashboard";
+import TeacherCourseCode from "./pages/u/teacherDashboard/teacherCourseCode";
+import ScoreUpdater from "./pages/u/teacherDashboard/scoreUpdater";
 
 function App() {
   return (
@@ -21,6 +23,8 @@ function App() {
 
           <Route element={<AuthOutlet fallbackPath="/login" />}>
             <Route path="/u" element={<Dashboard />} />
+            <Route path="/u/:courseCode" element={<TeacherCourseCode />} />
+            <Route path="/u/:courseCode/score-update/:classId" element={<ScoreUpdater />} />
           </Route>
 
           <Route path="*" element={<PageNotFound />} />
